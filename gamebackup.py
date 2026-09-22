@@ -92,14 +92,14 @@ def update_server_data():
 
 def create_server_data(gamestodump, gamespathstodump):
     try: 
-        rclone.ls(f"{savesdir}", args=["--stat"])
+        rclone.ls(savesdir, args=["--stat"])
     except:
-        rclone.mkdir(f"{savesdir}")
+        rclone.mkdir(savesdir)
 
     newfile = dumpjson(gamestodump, gamespathstodump)
     with open(gamedata_server_name, "w") as f:
         f.write(newfile)
-    rclone.move(gamedata_server_name, f"{remote_path}")
+    rclone.move(gamedata_server_name, remote_path)
 
 # Definição de argumentos para o CLI
 parser = argparse.ArgumentParser(
@@ -121,6 +121,9 @@ args = parser.parse_args()
 
 games = []
 gamespaths = []
+
+linux = False
+windows = False
 
 remote_path = "gamebackup:gamebackup"
 savesdir = f"{remote_path}/Saves" 
@@ -171,7 +174,7 @@ if not os.path.exists(gamedata_file) and not args.add:
                     gamespaths.append(gamepath)
                 if linux:
                     gamepath = re.sub(r"/home/[a-zA-Z0-9]+", home, path)
-                    gamespaths.append(gamepath)       
+                    gamespaths.append(gamepath)
             elif home in path:
                gamespaths.append(path)
                
